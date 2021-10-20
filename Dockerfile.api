@@ -1,0 +1,34 @@
+FROM node:16
+ARG PACKAGE
+ENV PACKAGE ${PACKAGE}
+
+WORKDIR /monorepo
+
+# Setup yarn 2
+COPY .yarn .yarn
+COPY .yarnrc.yml .yarnrc.yml
+RUN yarn set version berry
+
+# Move root files
+COPY package.json .
+COPY yarn.lock .
+COPY tsconfig.base.json .
+
+# Move packages
+COPY ./packages/$PACKAGE ./packages/$PACKAGE
+COPY ./packages/common ./packages/common
+
+# Build shared dependecies
+RUN yarn workspace common install
+RUN yarn workspace common build
+
+# Build app
+RUN yarn workspace $PACKAGE install
+RUN yarn workspace $PACKAGE prisma generate
+RUN yarn workspace $PACKAGE build
+
+# dev:
+CMD yarn workspace ${PACKAGE} dev
+
+# production:
+# CMD yarn workspace ${PACKAGE} start

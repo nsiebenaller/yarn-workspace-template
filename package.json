@@ -1,0 +1,18 @@
+{
+  "name": "yarn-workspaces-template",
+  "packageManager": "yarn@3.0.2",
+  "private": true,
+  "scripts": {
+    "common:dev": "yarn workspace common build:watch",
+    "api:dev": "yarn workspace api dev",
+    "dev": "run-p common:build-watch api:dev",
+    "docker:start": "docker-compose up -d --build",
+    "docker:stop": "docker-compose down"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

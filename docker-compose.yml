@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  # Fastify webserver
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      args:
+        - PACKAGE=api
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/test
+    ports:
+      - 1234:1234
+    volumes:
+      - ./packages/api:/monorepo/packages/api
+      - ./packages/common:/monorepo/packages/common
+      - /monorepo/node_modules
+    depends_on:
+      - db
+  # PostgreSQL database
+  db:
+    container_name: db
+    build: ./db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/.postgres:/var/lib/postgresql/data
+
+# Persist database between container versions
+volumes:
+  .postgres:
+
+# Enable communication between containers
+networks:
+  default:
+    driver: bridge
