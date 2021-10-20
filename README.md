@@ -1,4 +1,6 @@
-# workspaces-demo-2
+# yarn-workspace-template
+
+yarn 2 workspaces monorepo template with Fastify, Prisma, Postgresql in Docker
 
 ## Commands
 
